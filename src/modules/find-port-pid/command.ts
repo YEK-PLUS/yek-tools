@@ -1,20 +1,14 @@
 import { exec } from 'child_process';
-import { Command } from 'commander';
-import checkRequirements, { requirements } from '../../middlewares/checkRequirements';
-// eslint-disable-next-line global-require
-const reqs = require('./requirements.json') as requirements;
 
-const command = (program:Command) => async (port:number) => {
-  await checkRequirements(reqs, program);
-  const pid = await new Promise((resolve) => {
+const command = async (port:number) => {
+  const pids:number[] = await new Promise((resolve) => {
     exec(`lsof -n -i :${port} | grep LISTEN`, (err, stdout) => {
-      if (err) throw err;
-      const result = stdout.split(/\s/g).filter((e) => e !== '')[1];
-      resolve(result);
+      if (err) throw new Error('port is sleeping');
+      const result = stdout.split(/\s/g).filter((e) => e !== '');
+      resolve(result.filter((data, index) => index % 10 === 1).map((e) => parseInt(e, 10)));
     });
   });
-  // eslint-disable-next-line no-console
-  console.log(pid);
+  return pids;
 };
 
 export default command;

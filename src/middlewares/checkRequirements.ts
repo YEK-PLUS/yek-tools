@@ -12,7 +12,7 @@ export interface requirements {
     }
 }
 
-const checkRequirements = async (reqs :requirements, program:Command) => {
+const checkRequirements = async (reqs :requirements, program: Command) => {
   const cv = program.opts().checkVersion === 'true';
   const check = Object.entries(reqs[process.platform]);
   // eslint-disable-next-line no-promise-executor-return
@@ -30,6 +30,7 @@ const checkRequirements = async (reqs :requirements, program:Command) => {
     return resolve(true);
   }))
     : true)));
+  return true;
 };
 
 export default checkRequirements;
